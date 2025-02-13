@@ -185,6 +185,7 @@ class MultiStepAgent:
         description (`str`, *optional*): Necessary for a managed agent only - the description of this agent.
         provide_run_summary (`bool`, *optional*): Whether to provide a run summary when called as a managed agent.
         final_answer_checks (`list`, *optional*): List of Callables to run before returning a final answer for checking validity.
+        first_message_role (`MessageRole`, *optional*): Role to use for the first message. Defaults to MessageRole.SYSTEM.
     """
 
     def __init__(
@@ -204,6 +205,7 @@ class MultiStepAgent:
         description: Optional[str] = None,
         provide_run_summary: bool = False,
         final_answer_checks: Optional[List[Callable]] = None,
+        first_message_role: Optional[MessageRole] = None,
     ):
         if tool_parser is None:
             tool_parser = parse_json_tool_call
@@ -219,6 +221,7 @@ class MultiStepAgent:
         self.name = name
         self.description = description
         self.provide_run_summary = provide_run_summary
+        self.first_message_role = first_message_role or MessageRole.SYSTEM
 
         self.managed_agents = {}
         if managed_agents is not None:
@@ -240,7 +243,7 @@ class MultiStepAgent:
         self.system_prompt = self.initialize_system_prompt()
         self.input_messages = None
         self.task = None
-        self.memory = AgentMemory(self.system_prompt)
+        self.memory = AgentMemory(self.system_prompt, role=self.first_message_role)
         self.logger = AgentLogger(level=verbosity_level)
         self.monitor = Monitor(self.model, self.logger)
         self.step_callbacks = step_callbacks if step_callbacks is not None else []

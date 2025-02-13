@@ -1,6 +1,6 @@
 from dataclasses import asdict, dataclass
 from logging import getLogger
-from typing import TYPE_CHECKING, Any, Dict, List, TypedDict, Union
+from typing import TYPE_CHECKING, Any, Dict, List, TypedDict, Union, Optional
 
 from smolagents.models import ChatMessage, MessageRole
 from smolagents.monitoring import AgentLogger
@@ -182,16 +182,17 @@ class TaskStep(MemoryStep):
 @dataclass
 class SystemPromptStep(MemoryStep):
     system_prompt: str
+    role: MessageRole = MessageRole.SYSTEM
 
     def to_messages(self, summary_mode: bool = False, **kwargs) -> List[Message]:
         if summary_mode:
             return []
-        return [Message(role=MessageRole.SYSTEM, content=[{"type": "text", "text": self.system_prompt}])]
+        return [Message(role=self.role, content=[{"type": "text", "text": self.system_prompt}])]
 
 
 class AgentMemory:
-    def __init__(self, system_prompt: str):
-        self.system_prompt = SystemPromptStep(system_prompt=system_prompt)
+    def __init__(self, system_prompt: str, role: Optional[MessageRole] = None):
+        self.system_prompt = SystemPromptStep(system_prompt=system_prompt, role=role or MessageRole.SYSTEM)
         self.steps: List[Union[TaskStep, ActionStep, PlanningStep]] = []
 
     def reset(self):
