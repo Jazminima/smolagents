@@ -81,12 +81,39 @@ class PythonInterpreterTool(Tool):
 
 class FinalAnswerTool(Tool):
     name = "final_answer"
-    description = "Provides a final answer to the given problem."
-    inputs = {"answer": {"type": "any", "description": "The final answer to the problem"}}
-    output_type = "any"
+    description = """Provides a final answer to the given problem in markdown format.
+    
+IMPORTANT: When using information from web searches or document retrievals, you MUST:
+1. Use numbered citations in square brackets [1] when referencing information
+2. Include a "References:" section at the end listing all sources
+3. For web sources, include the URL as a markdown link
+4. For retrieved documents without URLs, include document metadata like title/collection
+5. Never make claims without citing their source
+6. Multiple pieces of information from the same source should use the same citation number
+7. Always use proper markdown formatting including:
+   - Headers with #
+   - Code blocks with ```
+   - Links with [text](url)
+   - Lists with - or numbers
+   - Emphasis with * or **
+Example:
+```markdown
+# Analysis of Minima Blockchain
+Minima's blockchain uses a proof-of-work consensus mechanism [1] and aims to be maximally decentralized [2]. The network currently has over 350,000 nodes [3].
+## Technical Details
+The consensus algorithm implements...
+## References
+[1] [Minima Consensus Documentation](github.com/minima-global/docs/consensus.md)
+[2] "Decentralization First" blog post by Spartacus Rex, from csv collection
+[3] Network stats from [v.minima.global](v.minima.global), Jan 2024
+```
+"""
+    inputs = {"answer": {"type": "any", "description": "The final answer to the problem in markdown format, including citations [1] and References section when using search/retrieval information"}}
+    output_type = "string"
 
-    def forward(self, answer: Any) -> Any:
-        return answer
+    def forward(self, answer: Any) -> str:
+        answer_str = str(answer)
+        return answer_str
 
 
 class UserInputTool(Tool):
