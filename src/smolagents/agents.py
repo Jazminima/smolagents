@@ -66,6 +66,8 @@ from .tools import Tool
 
 logger = getLogger(__name__)
 
+FAILED_AGENT_MESSAGE = "An agent tried to answer a user query but it got stuck and failed to do so. You are tasked with providing an answer instead. Here is the agent's memory. When using information from the agent's memory or any retrieved knowledge, you MUST cite your sources using these rules:\n1. Use numbered citations in square brackets [1] when referencing information\n2. Include a \"References:\" section at the end listing all sources\n3. For web sources, include the URL as a markdown link\n4. For retrieved documents without URLs, include document metadata like title/collection\n5. Never make claims without citing their source\n6. Multiple pieces of information from the same source should use the same citation number"
+
 
 def get_variable_names(self, template: str) -> Set[str]:
     pattern = re.compile(r"\{\{([^{}]+)\}\}")
@@ -229,7 +231,7 @@ class MultiStepAgent:
             messages[0]["content"] = [
                 {
                     "type": "text",
-                    "text": "An agent tried to answer a user query but it got stuck and failed to do so. You are tasked with providing an answer instead. Here is the agent's memory:",
+                    "text": FAILED_AGENT_MESSAGE,
                 }
             ]
             messages[0]["content"].append({"type": "image"})
@@ -249,7 +251,7 @@ class MultiStepAgent:
             messages[0]["content"] = [
                 {
                     "type": "text",
-                    "text": "An agent tried to answer a user query but it got stuck and failed to do so. You are tasked with providing an answer instead. Here is the agent's memory:",
+                    "text": FAILED_AGENT_MESSAGE,
                 }
             ]
             messages += self.write_memory_to_messages()[1:]
