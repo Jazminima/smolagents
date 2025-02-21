@@ -942,6 +942,15 @@ class CodeAgent(MultiStepAgent):
         ]
         self.logger.log(Group(*execution_outputs_console), level=LogLevel.INFO)
         memory_step.action_output = output
+        
+        # Handle stop execution signal
+        if isinstance(output, str) and output.startswith("STOP_EXECUTION:"):
+            self.logger.log(
+                Text(f"Execution stopped: {output[15:]}", style="bold red"),
+                level=LogLevel.INFO,
+            )
+            return output  # This will be treated as a final answer and stop execution
+            
         return output if is_final_answer else None
 
 
