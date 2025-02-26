@@ -82,7 +82,7 @@ YELLOW_HEX = "#d4b702"
 
 
 class AgentLogger:
-    def __init__(self, level: LogLevel = LogLevel.INFO):
+    def __init__(self, level:   LogLevel = LogLevel.INFO):
         self.level = level
         self.console = Console()
 
@@ -95,7 +95,14 @@ class AgentLogger:
         if isinstance(level, str):
             level = LogLevel[level.upper()]
         if level <= self.level:
-            self.console.print(*args, **kwargs)
+            # Convert string arguments to Text objects to prevent markup interpretation
+            safe_args = []
+            for arg in args:
+                if isinstance(arg, str):
+                    safe_args.append(Text(arg, style=None))
+                else:
+                    safe_args.append(arg)
+            self.console.print(*safe_args, **kwargs)
 
     def log_markdown(self, content: str, title: Optional[str] = None, level=LogLevel.INFO, style=YELLOW_HEX) -> None:
         markdown_content = Syntax(

@@ -763,7 +763,7 @@ class ToolCallingAgent(MultiStepAgent):
             else:
                 updated_information = str(observation).strip()
             self.logger.log(
-                f"Observations: {updated_information.replace('[', '|')}",  # escape potential rich-tag-like components
+                f"Observations: {Text(updated_information, style=None)}",  # Wrap in Text with no style to prevent markup interpretation
                 level=LogLevel.INFO,
             )
             memory_step.observations = updated_information
