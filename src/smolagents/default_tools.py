@@ -107,12 +107,18 @@ The consensus algorithm implements...
 [2] "Decentralization First" blog post by Spartacus Rex, from csv collection
 [3] Network stats from [v.minima.global](v.minima.global), Jan 2024
 ```
+
+Never ever use [REF] tags as it will break all the code!
 """
-    inputs = {"answer": {"type": "any", "description": "The final answer to the problem in markdown format, including citations [1] and References section when using search/retrieval information"}}
+    inputs = {"answer": {"type": "any", "description": "The final answer to the problem in markdown format, including citations and References section"}}
     output_type = "string"
 
     def forward(self, answer: Any) -> str:
         answer_str = str(answer)
+
+        # remove all [REF] and [/REF] tags just in case (it breaks smolagents)
+        answer_str = re.sub(r'\[REF\]', '', answer_str)
+        answer_str = re.sub(r'\[/REF\]', '', answer_str)
         return answer_str
 
 
