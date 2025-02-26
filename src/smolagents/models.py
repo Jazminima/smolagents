@@ -649,6 +649,10 @@ class LiteLLMModel(Model):
         custom_role_conversions (`dict[str, str]`, *optional*):
             Custom role conversion mapping to convert message roles in others.
             Useful for specific models that do not support specific message roles like "system".
+        input_cost_per_million_tokens (`int`, *optional*, defaults to 100000):
+            Cost in minima (1e-6) per million input tokens.
+        output_cost_per_million_tokens (`int`, *optional*, defaults to 300000):
+            Cost in minima (1e-6) per million output tokens.
         **kwargs:
             Additional keyword arguments to pass to the OpenAI API.
     """
@@ -659,6 +663,8 @@ class LiteLLMModel(Model):
         api_base=None,
         api_key=None,
         custom_role_conversions: Optional[Dict[str, str]] = None,
+        input_cost_per_million_tokens: int = 10,
+        output_cost_per_million_tokens: int = 20, 
         **kwargs,
     ):
         try:
@@ -675,6 +681,8 @@ class LiteLLMModel(Model):
         self.api_base = api_base
         self.api_key = api_key
         self.custom_role_conversions = custom_role_conversions
+        self.input_cost_per_million_tokens = input_cost_per_million_tokens
+        self.output_cost_per_million_tokens = output_cost_per_million_tokens
 
     def __call__(
         self,
