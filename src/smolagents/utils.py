@@ -148,6 +148,13 @@ def parse_json_blob(json_blob: str) -> Dict[str, str]:
     except Exception as e:
         raise ValueError(f"Error in parsing the JSON blob: {e}")
 
+def extract_code_from_text(text: str, code_block_tags: tuple[str, str]) -> str | None:
+    """Extract code from the LLM's output."""
+    pattern = rf"{code_block_tags[0]}(.*?){code_block_tags[1]}"
+    matches = re.findall(pattern, text, re.DOTALL)
+    if matches:
+        return "\n\n".join(match.strip() for match in matches)
+    return None
 
 def parse_code_blobs(text: str, code_block_tags: tuple[str, str]) -> str:
     """Extract code blocs from the LLM's output.
