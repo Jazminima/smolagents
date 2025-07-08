@@ -26,6 +26,7 @@ import types
 from functools import lru_cache
 from io import BytesIO
 from typing import TYPE_CHECKING, Any, Dict, Tuple, Union
+from textwrap import dedent
 
 
 if TYPE_CHECKING:
@@ -148,42 +149,60 @@ def parse_json_blob(json_blob: str) -> Dict[str, str]:
         raise ValueError(f"Error in parsing the JSON blob: {e}")
 
 
-def parse_code_blobs(code_blob: str) -> str:
-    """Parses the LLM's output to get any code blob inside. Will return the code directly if it's code."""
-    pattern = r"```(?:py|python)?\n(.*?)\n```"
-    matches = re.findall(pattern, code_blob, re.DOTALL)
-    if len(matches) == 0:
-        try:  # Maybe the LLM outputted a code blob directly
-            ast.parse(code_blob)
-            return code_blob
-        except SyntaxError:
-            pass
+def parse_code_blobs(text: str, code_block_tags: tuple[str, str]) -> str:
+    """Extract code blocs from the LLM's output.
 
-        if "final" in code_blob and "answer" in code_blob:
-            raise ValueError(
-                f"""
-Your code snippet is invalid, because the regex pattern {pattern} was not found in it.
-Here is your code snippet:
-{code_blob}
-It seems like you're trying to return the final answer, you can do it as follows:
-Code:
-```py
-final_answer("YOUR FINAL ANSWER HERE")
-```<end_code>""".strip()
-            )
+    If a valid code block is passed, it returns it directly.
+
+    Args:
+        text (`str`): LLM's output text to parse.
+
+    Returns:
+        `str`: Extracted code block.
+
+    Raises:
+        ValueError: If no valid code block is found in the text.
+    """
+    matches = extract_code_from_text(text, code_block_tags)
+    if not matches:  # Fallback to markdown pattern
+        matches = extract_code_from_text(text, ("```(?:python|py)", "\n```"))
+    if matches:
+        return matches
+    # Maybe the LLM outputted a code blob directly
+    try:
+        ast.parse(text)
+        return text
+    except SyntaxError:
+        pass
+
+    if "final" in text and "answer" in text:
         raise ValueError(
-            f"""
-Your code snippet is invalid, because the regex pattern {pattern} was not found in it.
-Here is your code snippet:
-{code_blob}
-Make sure to include code with the correct pattern, for instance:
-Thoughts: Your thoughts
-Code:
-```py
-# Your python code here
-```<end_code>""".strip()
+            dedent(
+                f"""
+                Your code snippet is invalid, because the regex pattern {code_block_tags[0]}(.*?){code_block_tags[1]} was not found in it.
+                Here is your code snippet:
+                {text}
+                It seems like you're trying to return the final answer, you can do it as follows:
+                {code_block_tags[0]}
+                final_answer("YOUR FINAL ANSWER HERE")
+                {code_block_tags[1]}
+                """
+            ).strip()
         )
-    return "\n\n".join(match.strip() for match in matches)
+    raise ValueError(
+        dedent(
+            f"""
+            Your code snippet is invalid, because the regex pattern {code_block_tags[0]}(.*?){code_block_tags[1]} was not found in it.
+            Here is your code snippet:
+            {text}
+            Make sure to include code with the correct pattern, for instance:
+            Thoughts: Your thoughts
+            {code_block_tags[0]}
+            # Your python code here
+            {code_block_tags[1]}
+            """
+        ).strip()
+    )
 
 
 def parse_json_tool_call(json_blob: str) -> Tuple[str, Union[str, None]]:

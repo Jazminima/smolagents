@@ -30,7 +30,7 @@ from smolagents.utils import get_source, parse_code_blobs
 class AgentTextTests(unittest.TestCase):
     def test_parse_code_blobs(self):
         with pytest.raises(ValueError):
-            parse_code_blobs("Wrong blob!")
+            parse_code_blobs("Wrong blob!", ("```py", "```"))
 
         # Parsing mardkwon with code blobs should work
         output = parse_code_blobs("""
@@ -39,12 +39,12 @@ Code:
 ```py
 import numpy as np
 ```<end_code>
-""")
+""", ("```py", "```"))
         assert output == "import numpy as np"
 
         # Parsing code blobs should work
         code_blob = "import numpy as np"
-        output = parse_code_blobs(code_blob)
+        output = parse_code_blobs(code_blob, ("```py", "```"))
         assert output == code_blob
 
     def test_multiple_code_blobs(self):
@@ -64,7 +64,7 @@ def multiply(a, b):
 
 def multiply(a, b):
     return a * b"""
-        result = parse_code_blobs(test_input)
+        result = parse_code_blobs(test_input, ("```py", "```"))
         assert result == expected_output
 
 
