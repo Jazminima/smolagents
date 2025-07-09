@@ -185,9 +185,17 @@ class Tool:
                 args = ()
                 kwargs = potential_kwargs
 
+        # --- BEGIN ARGUMENT FILTERING PATCH ---
+        # Only pass arguments that match the tool's defined inputs
+        if kwargs:
+            filtered_kwargs = {k: v for k, v in kwargs.items() if k in self.inputs}
+        else:
+            filtered_kwargs = kwargs
+        # --- END ARGUMENT FILTERING PATCH ---
+
         if sanitize_inputs_outputs:
-            args, kwargs = handle_agent_input_types(*args, **kwargs)
-        outputs = self.forward(*args, **kwargs)
+            args, filtered_kwargs = handle_agent_input_types(*args, **filtered_kwargs)
+        outputs = self.forward(*args, **filtered_kwargs)
         if sanitize_inputs_outputs:
             outputs = handle_agent_output_types(outputs, self.output_type)
         return outputs
