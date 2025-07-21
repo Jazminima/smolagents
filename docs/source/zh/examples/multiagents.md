@@ -41,7 +41,7 @@ rendered properly in your Markdown viewer.
 我们来一起构建这个系统。运行下列代码以安装依赖包：
 
 ```
-!pip install markdownify duckduckgo-search smolagents --upgrade -q
+!pip install markdownify ddgs smolagents --upgrade -q
 ```
 
 我们需要登录Hugging Face Hub以调用HF的Inference API：

@@ -43,7 +43,7 @@ rendered properly in your Markdown viewer.
 आवश्यक डिपेंडेंसी इंस्टॉल करने के लिए नीचे दी गई लाइन चलाएं:
 
 ```
-!pip install markdownify duckduckgo-search smolagents --upgrade -q
+!pip install markdownify ddgs smolagents --upgrade -q
 ```
 
 HF Inference API को कॉल करने के लिए लॉगिन करें:

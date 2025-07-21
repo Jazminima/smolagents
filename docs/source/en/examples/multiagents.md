@@ -40,7 +40,7 @@ Let's set up this system.
 Run the line below to install the required dependencies:
 
 ```
-!pip install markdownify duckduckgo-search smolagents --upgrade -q
+!pip install markdownify ddgs smolagents --upgrade -q
 ```
 
 Let's login in order to call the HF Inference API:
@@ -187,3 +187,5 @@ Seems like we'll need some sizeable powerplants if the [scaling hypothesis](http
 Our agents managed to efficiently collaborate towards solving the task! ✅
 
 💡 You can easily extend this orchestration to more agents: one does the code execution, one the web search, one handles file loadings...
+
+```
