@@ -81,24 +81,8 @@ class PythonInterpreterTool(Tool):
 
 class FinalAnswerTool(Tool):
     name = "final_answer"
-    description = """Provides a final answer to the given problem.
+    description = """Signals the completion of your task or interaction with a user. Should be a very simple text one-liner indicating that you are finished. For example "All done!".
  
-    To ensure correct formatting on V, responses to users must be sent as a plain text reply format with no markdown formatting UNLESS the user that is being responded to has asked for an article. 
-    
-    ONLY IF you are required to create an article should you follow the following rules:
-
-    1. Use numbered citations in square brackets [1] when referencing web sources
-    2. Include a "References:" section at the end listing all web sources
-    3. For web sources, include the URL as a markdown link
-    4. Never make claims without citing their source
-    5. Multiple pieces of information from the same source should use the same citation number
-    6. Use proper markdown formatting including:
-        - Headers with #
-        - Code blocks with ```
-        - Links with [text](url)
-        - Lists with - or numbers
-        - Emphasis with * or **
-
     Never ever use [REF] tags as it will break all the code!
     """
 
