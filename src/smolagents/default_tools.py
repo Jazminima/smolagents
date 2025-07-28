@@ -79,24 +79,33 @@ class PythonInterpreterTool(Tool):
         return f"Stdout:\n{str(state['_print_outputs'])}\nOutput: {output}"
 
 
+# class FinalAnswerTool(Tool):
+#     name = "final_answer"
+#     description = """Signals the completion of your task or interaction with a user. Should be a very simple text one-liner indicating that you are finished. For example "All done!".
+ 
+#     Never ever use [REF] tags as it will break all the code!
+#     """
+
+#     inputs = {"answer": {"type": "any", "description": "The final response to the user"}}
+#     output_type = "string"
+
+#     def forward(self, answer: Any) -> str:
+#         answer_str = str(answer)
+
+#         # remove all [REF] and [/REF] tags just in case (it breaks smolagents)
+#         answer_str = re.sub(r'\[REF\]', '', answer_str)
+#         answer_str = re.sub(r'\[/REF\]', '', answer_str)
+#         return answer_str
+
+# revert to original final answer tool 
 class FinalAnswerTool(Tool):
     name = "final_answer"
-    description = """Signals the completion of your task or interaction with a user. Should be a very simple text one-liner indicating that you are finished. For example "All done!".
- 
-    Never ever use [REF] tags as it will break all the code!
-    """
-
-    inputs = {"answer": {"type": "any", "description": "The final response to the user"}}
-    output_type = "string"
-
-    def forward(self, answer: Any) -> str:
-        answer_str = str(answer)
-
-        # remove all [REF] and [/REF] tags just in case (it breaks smolagents)
-        answer_str = re.sub(r'\[REF\]', '', answer_str)
-        answer_str = re.sub(r'\[/REF\]', '', answer_str)
-        return answer_str
-
+    description = "Provides a final answer to the given problem."
+    inputs = {"answer": {"type": "any", "description": "The final answer to the problem"}}
+    output_type = "any"
+    
+    def forward(self, answer: Any) -> Any:
+        return answer
 
 class UserInputTool(Tool):
     name = "user_input"
