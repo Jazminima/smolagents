@@ -884,7 +884,7 @@ class CodeAgent(MultiStepAgent):
 
         # Parse
         try:
-            code_action = fix_final_answer_code(parse_code_blobs(model_output, ("```py", "```")))
+            code_action = fix_final_answer_code(parse_code_blobs(model_output, ("```(?:python|py)", "```")))
         except Exception as e:
             error_msg = f"Error in code parsing:\n{e}\nMake sure to provide correct code blobs."
             raise AgentParsingError(error_msg, self.logger)
